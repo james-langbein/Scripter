@@ -1,0 +1,60 @@
+Ideas
+*****
+
+Data Sources
+************
+ - file system
+ - database (is there any point? would define a db, table, content column, filter column)
+ - repositories > Github, ...
+ - internal SQLite database (possibly have the ability to save the 'files' in the current data source to the db...)
+
+Implementation of Data Sources
+Data sources will sit somewhere in the config menu. Sources will appear in a table view I think...
+Functionality will be:
+ Add Data Source
+  - A wizard-like interface for adding a new data source. Choice of Source Type will determine the next windows shown.
+  - Choice should be given whether to index data source or not, along with related options. Choice should be offered
+    to index data source immediately or on app open.
+  - Choice should be given (for filesystem sources) to provide inclusion/exclusion parameters ('Source Filtering').
+ Modify Data Source
+  - Choose existing source
+  - Go through wizard interface and modify where desired?
+  - choose whether to index source or not (with note that it is recommended for speed of searching)
+ Remove Data Source
+  - Select a source to remove
+ Re-index Data Source
+  - Re-index a data source manually
+
+
+Data Source Indexing
+********************
+Implement user-driven indexing. Each Data Source has a related option of whether to re-index on opening the app or only
+manually.
+
+
+Script Parameters
+*****************
+These are basically a reimplementation of the SSMS functionality called Query Parameters (or something like that).
+
+Implementation
+The user should be able to define their own 'begin' and 'end' symbols.
+The UI should have an example of the currently entered tags. There should be default symbols, maybe the ^ symbol, as
+that is rarely used and easy to type.
+
+
+QCompletions
+************
+(see https://doc.qt.io/qt-5/qtwidgets-tools-completer-example.html)
+This already exists in app version 0.8. I should implement it for adding a new file system source, and maybe even for
+adding repository sources, if that's feasible.
+There should also be config options for:
+ - case sensitivity
+ - completion mode (filtered popup)
+
+
+Searching
+*********
+Implement searching with wildcards, via regex, maybe also SQL-like searching.
+The above could be done by translating the search filter into a regex pattern, depending on the search syntax chosen.
+
+

@@ -1,0 +1,45 @@
+Next Steps/Roadmap
+
+1. Change the corpus back-end...
+Using multiple copies of the corpus/derived lists. Need to clean this up.
+
+Idea is: Have one master copy of the corpus, and have the options/dropdowns being changed/toggled be connected to
+functions that control how the corpus is sorted etc, which cascades to which list is currently being used for the
+file-view. I could potentially load the file-view straight from the corpus, and maybe it would be fast enough, but
+I want to lessen memory usage as much as possible.
+
+This leads to the observation that I need to re-architect the back-end to make it easier to reason about and work with.
+
+I need to create at least one class for the Corpus (data layer) along with the pre-existing class for the UI.
+
+Was reading some stuff online about it, one writer suggests using Components and Services as a way of organising the
+code.
+https://www.utm.mx/~caff/doc/OpenUPWeb/openup/guidances/guidelines/abstract_away_complexity_DBF13AE6.html
+
+With that view... Components are object classes, services are either the methods of those classes (or) or interface
+classes. At this stage I think some of them will be methods, others may be their own classes.
+Components:
+ - UI
+ - Software Data (Documents, Corpus)
+ - Subsystems/Data (File-system, GitHub, etc.)
+Services:
+ - (Qt) Handle the display/usage of the UI
+ - () Browse the data subsystems
+ - () Interface between the data subsystem and the Corpus
+
+
+
+2. Security...
+In future, probably necessary to encrypt the saved corpus.
+
+
+
+3. Saving of corpus
+In future, could hold the saved corpus in a SQLite DB or something like that. Idea would be to hold the corpus in memory
+during run-time for fast searching etc, although this could be an option for the user.. fast searching with memory cost,
+or slower searching with less used memory.
+
+
+
+4. In-memory searching...
+I could explore using Redis in the future, if the need for faster searching becomes apparent.
