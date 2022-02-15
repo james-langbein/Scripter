@@ -52,14 +52,14 @@ class MainWindow(QMainWindow):
         # TODO: File menu > add option 'Reload File List'
         # TODO: 'exclude folders' config option? exclusive 'include folders' option? (line edit lists)
 
+        self.setWindowTitle(window_title)
+        self.setWindowIcon(QIcon(icon_file))
+
         self.flag_force_quit = False
         self.flag_minimise_to_tray = False
         self.flag_show_preview = True
         self.flag_file_updated = True
         self.flag_preview_edited = False
-
-        self.setWindowTitle(window_title)
-        self.setWindowIcon(QIcon(icon_file))
 
         # https://www.hongkiat.com/blog/40-free-and-useful-gui-icon-sets-for-web-designers/
         # https://iconstore.co/icons/72-free-icons/
