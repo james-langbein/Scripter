@@ -14,8 +14,8 @@ class Corpus:
 
     """
     def __init__(self,
-                 sources: list,
-                 documents: list,
+                 sources: list = None,
+                 documents: list = None,
                  next_id: int = 0):
         """
 

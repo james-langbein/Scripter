@@ -25,7 +25,7 @@ nlp = spacy.load('en_core_web_sm')
 nlp.disable_pipes(['tok2vec', 'tagger', 'parser', 'attribute_ruler', 'ner', 'lemmatizer'])
 
 # the below variables will eventually become config options in the application
-filelist_root = 'C:\\Users\\JamesLangbein\\All\\SQL Scripts'
+source = 'C:\\Users\\JamesLangbein\\All\\SQL Scripts'
 # index_root = True
 case_sensitivity = True
 # index_files = True
@@ -33,8 +33,9 @@ case_sensitivity = True
 # filename_suffixes = False
 # search_subdirectories = True
 icon_file = 'Icons/blue_icon2.png'
-pickle_file = '../Cache/canope.pkl'
+saved_corpus = '../Cache/canope.pkl'
 window_title = 'Scripter - Beta'
+first_time_use = True
 
 
 # noinspection PyUnresolvedReferences
@@ -51,6 +52,11 @@ class MainWindow(QMainWindow):
         # TODO: search by 'most used' option, sorts files in order of most used
         # TODO: File menu > add option 'Reload File List'
         # TODO: 'exclude folders' config option? exclusive 'include folders' option? (line edit lists)
+
+        source_one = Source()
+        source_one.location = source
+        """Could potentially include an example source (in the install root) with some example files in it, for tutorial
+        or first-time use purposes."""
 
         self.setWindowTitle(window_title)
         self.setWindowIcon(QIcon(icon_file))
@@ -238,7 +244,7 @@ class MainWindow(QMainWindow):
         # specify new_file widgets
         self.label_folder = QLabel(text='Folder:')
         self.lineEdit_new_file_folder = QLineEdit()
-        self.lineEdit_new_file_folder.setText(filelist_root)
+        self.lineEdit_new_file_folder.setText(source)
         self.button_select_folder = QPushButton(text='Select Folder')
         self.button_select_folder.clicked.connect(self.pick_newfile_folder)
         self.label_input_filename = QLabel(text='Filename:')
@@ -351,9 +357,34 @@ class MainWindow(QMainWindow):
         widget.setLayout(self.layout_main_hbox)
         self.setCentralWidget(widget)
 
-        # initialise the corpus
-        self.corpus = None
-        self.update_corpus(filelist_root)  # sets the corpus value in line above
+        # load saved config if exists (first time use, saved config should be preset to indicate as such)
+        # will contain location of saved
+
+        # initialise the corpus and browser
+
+        # self.corpus = None  # working ver 1, uncomment to run older version
+        # self.update_corpus(filelist_root)  # working ver 1, sets the corpus value in line above
+
+        self.corpus = Corpus()
+        """
+        Possible situations:
+         - first time use > first_time_use flag should be True > get a source > init corpus from source
+         - saved corpus not found > should have source/s already > init corpus from source/s
+            - saved sources not found > get source/s again > init corpus
+         - saved corpus found > init corpus from saved file
+        """
+        if first_time_use is True:
+            pass  # ask for a source and then build corpus
+        elif saved_corpus:  # corpus exists (location in saved config file...)
+            try:
+                with open(saved_corpus, 'rb') as pkl:  # pkl should be the pickled corpus
+                    self.corpus = pickle.load(pkl)
+            except Exception as e:  # make this more specific depending on possible errors
+                print(e)
+                # file not found, build corpus again
+        elif first_time_use is True:  # least likely, eval last
+            pass
+        self.browser = Browser()
 
         # initialise the bm25 indices (not being used due to inconsistent search results)
         # self.bm25_filenames = BM25Okapi([x['title_tokens'] for x in self.corpus])
@@ -455,15 +486,15 @@ class MainWindow(QMainWindow):
         Only supports Windows file system searching."""
         print('\nEntering update_corpus function...')
         # check if filelist_root is set, if not then return message
-        if not filelist_root:
+        if not source:
             return 'Filelist_root not set, exiting'
 
         else:
             # does pickled corpus exist?
-            if os.path.exists(pickle_file):
+            if os.path.exists(saved_corpus):
                 # yes, load pickled corpus
                 print('Pickled corpus exists, loading into memory.')
-                with open(pickle_file, 'rb') as pkl:
+                with open(saved_corpus, 'rb') as pkl:
                     self.corpus = pickle.load(pkl)
 
             # if pickled corpus does not exist > set corpus to empty list
@@ -563,7 +594,7 @@ class MainWindow(QMainWindow):
     def pick_newfile_folder(self):
         print('\nEntering pick_newfile_folder function...')
         dialog = QFileDialog()
-        folder_path = dialog.getExistingDirectory(None, "Select Folder", dir=filelist_root)
+        folder_path = dialog.getExistingDirectory(None, "Select Folder", dir=source)
         self.lineEdit_new_file_folder.setText(folder_path)
 
     def save_new_file(self):
@@ -584,7 +615,7 @@ class MainWindow(QMainWindow):
                 file_content = self.input_filecontent_widget.toPlainText()
                 with open(os.path.join(folder_path, file_name), 'w') as file:
                     file.write(file_content)
-                self.update_corpus(filelist_root)
+                self.update_corpus(source)
                 self.statusbar.showMessage(f'Saved new file.', 10000)
             except Exception as e:
                 print(e)
@@ -768,7 +799,7 @@ class MainWindow(QMainWindow):
         print('\nEntering closeEvent function...')
         if self.flag_force_quit or not self.flag_minimise_to_tray:
             print('Force quitting or exiting + minimise_to_tray is False.')
-            with open(pickle_file, 'wb') as pkl:
+            with open(saved_corpus, 'wb') as pkl:
                 pickle.dump(self.corpus, pkl)
                 print('Dumped corpus to pickle file prior to exit.')
             self.close()
