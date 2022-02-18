@@ -1,12 +1,16 @@
 from pathlib import Path
 from datetime import datetime
 import re
+from source import Source
 
 
 class Document:
     """Generic parent class with the common attributes/methods shared by all types of documents.
     Sub-classes for specific types of documents will be created as needed with specific attributes/methods that apply
     to that type.
+
+    For the last_modified arg, this will either take a datetime or float. It will implicitly convert a float to a
+    datetime as part of instantiation.
 
     A document is responsible for defining it's type (Windows file, etc) and it's source (full path, url, etc).
     (The Browser class is responsible for getting updates to the file from the source.)
@@ -32,20 +36,22 @@ class Document:
         - Backblaze?
         - see list of more here at bottom of page: https://www.techradar.com/nz/news/the-best-cloud-storage
     """
-    def __init__(self,
-                 uid: int,
-                 title: str,
-                 content: str,
-                 source: str,
-                 last_modified: datetime,
-                 copy_count: int
+    def __init__(self
+                 , uid: int = None
+                 , title: str = None
+                 , content: str = None
+                 , source: Source = None
+                 , full_path: str = None
+                 , last_modified: datetime = None
+                 , copy_count: int = None
                  ):
         """
 
         :type uid: int
         :type title: str
         :type content: str
-        :type source: str
+        :type source: Source
+        :type full_path: str
         :type last_modified: datetime
         :type copy_count: int
         """
@@ -53,6 +59,7 @@ class Document:
         self.title = title
         self.content = content
         self.source = source
+        self.full_path = full_path
         if type(self.last_modified) is datetime:
             self.last_modified = last_modified
         elif type(self.last_modified) is float:
@@ -69,10 +76,10 @@ class Document:
             f' Title: {self.title}'
         )
 
-    @property
-    def full_path(self):
-        path = Path(self.source)
-        return path.joinpath(self.title)
+    # @property
+    # def full_path(self):
+    #     path = Path(self.source)
+    #     return path.joinpath(self.title)
 
     @property
     def parent_folder(self):

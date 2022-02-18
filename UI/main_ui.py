@@ -33,9 +33,9 @@ case_sensitivity = True
 # filename_suffixes = False
 # search_subdirectories = True
 icon_file = 'Icons/blue_icon2.png'
-saved_corpus = '../Cache/canope.pkl'
+saved_corpus = '../Cache/canope.pkl'  # this is the old version of the corpus, will need to rebuild new version
 window_title = 'Scripter - Beta'
-first_time_use = True
+first_time_use = False
 
 
 # noinspection PyUnresolvedReferences
@@ -327,7 +327,6 @@ class MainWindow(QMainWindow):
         # add groups to main layout
         self.layout_preferences_dialogue.addWidget(self.groupbox_general_preferences)
         self.layout_preferences_dialogue.addWidget(self.groupbox_search_ordering)
-        # self.lineEdit_exclude_folders = QLineEdit()  # TODO: turn this into grid/list dialogue later?
         # TODO: add OK and Cancel buttons
         # TODO: add line edit for choosing which file types to show based on file suffix
         # add widgets to layout
@@ -348,7 +347,7 @@ class MainWindow(QMainWindow):
         # check saved flag_show_preview and set checkState accordingly
         if self.flag_show_preview:  # TODO: change this to checking the saved/loaded prefs
             self.checkbox_show_preview.setCheckState(Qt.CheckState.Checked)
-        # check show_preview_flag and show preview pane if True
+        # check flag_show_preview and show preview pane if True
         if self.flag_show_preview is True:
             self.layout_main_hbox.addLayout(self.layout_preview_pane_vbox)
 
@@ -363,27 +362,29 @@ class MainWindow(QMainWindow):
         # initialise the corpus and browser
 
         # self.corpus = None  # working ver 1, uncomment to run older version
-        # self.update_corpus(filelist_root)  # working ver 1, sets the corpus value in line above
+        # self.update_corpus(saved_corpus)  # working ver 1, sets the corpus value in line above
 
         self.corpus = Corpus()
         """
         Possible situations:
-         - first time use > first_time_use flag should be True > get a source > init corpus from source
+         - first time use > first_time_use flag should be True > tutorial? > no, get a source > init corpus from source
          - saved corpus not found > should have source/s already > init corpus from source/s
             - saved sources not found > get source/s again > init corpus
          - saved corpus found > init corpus from saved file
         """
         if first_time_use is True:
-            pass  # ask for a source and then build corpus
+            # ask if user wants to go through tutorial on window load, using an example source included with install
+            # if not, then ask for a source and build corpus from that
+            pass
         elif saved_corpus:  # corpus exists (location in saved config file...)
             try:
                 with open(saved_corpus, 'rb') as pkl:  # pkl should be the pickled corpus
                     self.corpus = pickle.load(pkl)
             except Exception as e:  # make this more specific depending on possible errors
                 print(e)
-                # file not found, build corpus again
-        elif first_time_use is True:  # least likely, eval last
-            pass
+                # file not found, build corpus again from saved_sources
+                # should I have two copies of the source list? one within saved_corpus and one in config?
+                # this would seem to make it more robust, would need to keep both updated though...
         self.browser = Browser()
 
         # initialise the bm25 indices (not being used due to inconsistent search results)

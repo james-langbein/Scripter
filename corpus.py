@@ -1,11 +1,10 @@
 from document import Document
+from browser import Browser
 """Class module for the Corpus.
 
 Notes:
     - the corpus will be responsible for handling the giving of UID's to documents to ensure unique records and allow
     for easier referencing to documents during calls for title/content/source etc.
-    I think this will most easily be handled by a class attribute called 'next_id', so when a document is added I can
-    call something like 'give_next_id()'.
 """
 
 
@@ -27,6 +26,17 @@ class Corpus:
         self.documents = documents
         self.next_id = next_id
 
-    def give_next_id(self, document: Document):
+    def give_next_id(self, document: Document=None):
+        """If given a document, will set the document uid, else will return the uid to be given to the document."""
         document.uid = self.next_id
         self.next_id += 1
+
+    def add_document(self, document):
+        self.give_next_id(document)
+        self.documents.append(document)
+
+    def check_for_updates(self):
+        print("Currently points to placeholder function in Browser class.")
+        browser = Browser()
+        for document in self.documents:
+            browser.check_for_document_update(document)

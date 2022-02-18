@@ -7,12 +7,12 @@ class Source:
     Include_folders: An exclusive list of folders to include when traversing the source, ignoring all other folders.
     """
     def __init__(self,
-                 location: str,
+                 root: str,
                  credentials=None,
                  subdirectories: bool=True,
                  exclude_folders: list=None,
                  include_folders: list=None):
-        self.location = location
+        self.root = root
         self.credentials = credentials
         self.subdirectories = subdirectories
         self.exclude_folders = exclude_folders

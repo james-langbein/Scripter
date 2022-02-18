@@ -1,5 +1,6 @@
 import os
 from document import Document
+from corpus import Corpus
 # later import libraries for browsing web
 
 
@@ -9,12 +10,50 @@ class Browser:
 
     This may not even be directly used, I think the Document/Corpus classes may be the entry points."""
 
-    def get_source_documents(self, source, subdirectories=False):
+    @staticmethod
+    def get_source_documents(source, corpus: Corpus=None, subdirectories=False):
         """Get all files from a source the first time, or if the saved corpus is deleted.
         This is run iteratively on the defined sources, with each document being added to the corpus at some point,
         although this may be handled by the Corpus class.
+
+        If corpus is None, it is assumed that this is the first source, so a new corpus will need to be initialised. In
+        other cases, a pre-initialised/built corpus should be provided for this arg. In the case of a pre-built corpus,
+        the list of sources should be checked to ensure this new source does not match a pre-existing one.
+        All files still need to be checked against pre-existing documents, as a given source may be a parent to a
+        pre-existing source.
         """
-        pass
+        if not source:
+            return print('Source not set, exiting')
+
+        else:
+            if corpus is None:  # init new corpus
+                _corpus = Corpus()
+            else:
+                _corpus = corpus
+
+            # assuming a Windows filesystem for the time-being
+            for path, subdirs, files in os.walk(top=source.root):
+                for filename in files:
+                    # check full-path doesn't already exist in corpus docs
+                    if os.path.join(path, filename) not in [document.full_path for document in _corpus.documents]:
+                        # get document attr's
+                        try:
+                            with open(os.path.join(path, filename), 'r', encoding='UTF-8') as f:
+                                content = f.read()
+                        except Exception as e:
+                            print(e)
+                    title = filename
+                    full_path = os.path.join(path, filename)
+                    last_mod_date = os.path.getmtime(path)
+
+                    document = Document(title=title
+                                        , content=content
+                                        , source=source
+                                        , full_path=full_path
+                                        , last_modified=last_mod_date
+                                        , copy_count=0)
+
+                    _corpus.add_document(document)
 
     def check_for_document_update(self, document: Document):
         """Check for update to a given document. Documents are responsible for knowing their source location and kind,
