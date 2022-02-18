@@ -1,6 +1,8 @@
 import os
-from document import Document
-from corpus import Corpus
+import document
+import corpus
+
+
 # later import libraries for browsing web
 
 
@@ -11,7 +13,7 @@ class Browser:
     This may not even be directly used, I think the Document/Corpus classes may be the entry points."""
 
     @staticmethod
-    def get_source_documents(source, corpus: Corpus=None, subdirectories=False):
+    def get_source_documents(source, corpus: corpus.Corpus = None):
         """Get all files from a source the first time, or if the saved corpus is deleted.
         This is run iteratively on the defined sources, with each document being added to the corpus at some point,
         although this may be handled by the Corpus class.
@@ -21,6 +23,8 @@ class Browser:
         the list of sources should be checked to ensure this new source does not match a pre-existing one.
         All files still need to be checked against pre-existing documents, as a given source may be a parent to a
         pre-existing source.
+
+        It is assumed that a recursive search is desired.
         """
         if not source:
             return print('Source not set, exiting')
@@ -33,27 +37,31 @@ class Browser:
 
             # assuming a Windows filesystem for the time-being
             for path, subdirs, files in os.walk(top=source.root):
+                # calculate this list comprehension once and then refer to it below
+                current_paths = [document.full_path for document in _corpus.documents]
                 for filename in files:
                     # check full-path doesn't already exist in corpus docs
-                    if os.path.join(path, filename) not in [document.full_path for document in _corpus.documents]:
+                    if os.path.join(path, filename) not in current_paths:
                         # get document attr's
                         try:
                             with open(os.path.join(path, filename), 'r', encoding='UTF-8') as f:
                                 content = f.read()
                         except Exception as e:
                             print(e)
-                    title = filename
-                    full_path = os.path.join(path, filename)
-                    last_mod_date = os.path.getmtime(path)
+                        title = filename
+                        full_path = os.path.join(path, filename)
+                        last_mod_date = os.path.getmtime(path)
 
-                    document = Document(title=title
-                                        , content=content
-                                        , source=source
-                                        , full_path=full_path
-                                        , last_modified=last_mod_date
-                                        , copy_count=0)
+                        document = Document(title=title
+                                            , content=content
+                                            , source=source
+                                            , full_path=full_path
+                                            , last_modified=last_mod_date
+                                            , copy_count=0)
 
-                    _corpus.add_document(document)
+                        _corpus.add_document(document)
+                    else:
+                        print(f'Document ({filename}) at location {path}, already exists within the corpus, skipping.')
 
     def check_for_document_update(self, document: Document):
         """Check for update to a given document. Documents are responsible for knowing their source location and kind,
