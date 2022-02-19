@@ -9,6 +9,27 @@ nlp = spacy.load('en_core_web_sm')
 nlp.disable_pipes(['tok2vec', 'tagger', 'parser', 'attribute_ruler', 'ner', 'lemmatizer'])
 
 
+class Config:
+    """Defines the configuration options for the GUI. To be serialised on quitting the app, and loaded/re-initialised
+    on app start.
+    This is separate to permanent configuration options like the app icon etc."""
+    def __init__(self
+                 , first_time_user=False
+                 , case_sensitive_search=True
+                 , display_filename_suffixes=True
+                 , window_x=400
+                 , window_y=400
+                 , window_width=200
+                 , window_height=300):
+        self.first_time_user = first_time_user
+        self.case_sensitive_search = case_sensitive_search
+        self.display_filename_suffixes = display_filename_suffixes
+        self.window_x = window_x
+        self.window_y = window_y
+        self.window_width = window_width
+        self.window_height = window_height
+
+
 class Source:
     """Defines a source for documents. Intended to be a generic class to allow for further document systems to be
     supported later. Stand-alone object, to be held in a list in the corpus.
@@ -22,13 +43,13 @@ class Source:
     Could implement a method to get/provide it's referenced credentials later. These may be references to the specific
     API's of different document systems.
     """
-    def __init__(self,
-                 kind: str,
-                 root: str,
-                 credentials=None,
-                 subdirectories: bool=True,
-                 exclude_folders: list=None,
-                 include_folders: list=None):
+    def __init__(self
+                 , kind: str
+                 , root: str
+                 , credentials=None
+                 , subdirectories: bool=True
+                 , exclude_folders: list=None
+                 , include_folders: list=None):
         self.kind = kind
         self.root = root
         self.credentials = credentials
@@ -125,10 +146,10 @@ class Corpus:
     """Holds the list of sources, list of documents, and controls the distribution of unique id's to documents.
 
     """
-    def __init__(self,
-                 sources: list = None,
-                 documents: list = None,
-                 next_id: int = 0):
+    def __init__(self
+                 , sources: list = None
+                 , documents: list = None
+                 , next_id: int = 0):
         """
         :type sources: object
         :type documents: object

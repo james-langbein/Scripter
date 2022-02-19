@@ -11,10 +11,7 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from browser import Browser
-from source import Source
-from document import Document
-from corpus import Corpus
+from classes import Source, Document, Corpus, Browser
 
 # tell Windows that this app has a specific custom ID, thus leading to the correct icon being shown in the taskbar
 myappid = u'jrldevelopment.scripter.beta'
@@ -794,8 +791,6 @@ class MainWindow(QMainWindow):
             get_data(self.model, self.files[1])
 
     def closeEvent(self, event):
-        # TODO: implement repickling ONLY if files updated through app during session
-        #  see comment in update_file method
         # TODO: pickle position/size + app options
         print('\nEntering closeEvent function...')
         if self.flag_force_quit or not self.flag_minimise_to_tray:
