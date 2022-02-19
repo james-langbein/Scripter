@@ -1,6 +1,6 @@
 import os
-import document
-import corpus
+import document_old
+import corpus_old
 
 
 # later import libraries for browsing web
@@ -13,7 +13,7 @@ class Browser:
     This may not even be directly used, I think the Document/Corpus classes may be the entry points."""
 
     @staticmethod
-    def get_source_documents(source, corpus: corpus.Corpus = None):
+    def get_source_documents(source, corpus: corpus_old.Corpus = None):
         """Get all files from a source the first time, or if the saved corpus is deleted.
         This is run iteratively on the defined sources, with each document being added to the corpus at some point,
         although this may be handled by the Corpus class.
