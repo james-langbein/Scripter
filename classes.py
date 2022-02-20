@@ -30,6 +30,27 @@ class Config:
         self.window_height = window_height
 
 
+class Config:
+    """Defines the configuration options for the GUI. To be serialised on quitting the app, and loaded/re-initialised
+    on app start.
+    This is separate to permanent configuration options like the app icon etc."""
+    def __init__(self
+                 , first_time_user=False
+                 , case_sensitive_search=True
+                 , display_filename_suffixes=True
+                 , window_x=400
+                 , window_y=400
+                 , window_width=200
+                 , window_height=300):
+        self.first_time_user = first_time_user
+        self.case_sensitive_search = case_sensitive_search
+        self.display_filename_suffixes = display_filename_suffixes
+        self.window_x = window_x
+        self.window_y = window_y
+        self.window_width = window_width
+        self.window_height = window_height
+
+
 class Source:
     """Defines a source for documents. Intended to be a generic class to allow for further document systems to be
     supported later. Stand-alone object, to be held in a list in the corpus.
