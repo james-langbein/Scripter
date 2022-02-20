@@ -3,7 +3,6 @@ from datetime import datetime
 import spacy
 import re
 import os
-from PySide2.QtCore import QA
 
 # load nlp, used in get_corpus method
 nlp = spacy.load('en_core_web_sm')
