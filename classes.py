@@ -3,6 +3,7 @@ from datetime import datetime
 import spacy
 import re
 import os
+from PySide2.QtCore import QA
 
 # load nlp, used in get_corpus method
 nlp = spacy.load('en_core_web_sm')
@@ -12,7 +13,7 @@ nlp.disable_pipes(['tok2vec', 'tagger', 'parser', 'attribute_ruler', 'ner', 'lem
 class Config:
     """Defines the configuration options for the GUI. To be serialised on quitting the app, and loaded/re-initialised
     on app start.
-    This is separate to permanent configuration options like the app icon etc."""
+    This is separate to permanent configuration options like the app icon etc, which will be hard-coded."""
     def __init__(self
                  , first_time_user=False
                  , case_sensitive_search=True
